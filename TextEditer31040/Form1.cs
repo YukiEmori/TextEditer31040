@@ -18,14 +18,15 @@ namespace TextEditer31040
         public Form1()
         {
             InitializeComponent();
-         }
-        
-        //終了
-        private void EndXToolStripMenuItem_Click(object sender, EventArgs e)
+        }
+        #region ファイル
+
+        //新規作成
+        private void NewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //アプリケーション終了
-            Application.Exit();
-        }   
+            filename = "";
+            rtTextArea.Text = "";
+        }
 
         //開く
         private void OpenOToolStripMenuItem_Click(object sender, EventArgs e)
@@ -33,29 +34,29 @@ namespace TextEditer31040
             //ダイアログを表示
             if (ofdFileOpen.ShowDialog() == DialogResult.OK)
             {
-                using(StreamReader sr = new StreamReader(ofdFileOpen.FileName, Encoding.GetEncoding("utf-8"),false))
+                using (StreamReader sr = new StreamReader(ofdFileOpen.FileName, Encoding.GetEncoding("utf-8"), false))
                 {
                     rtTextArea.Text = sr.ReadToEnd();
                     filename = ofdFileOpen.FileName; //現在開いているファイル名を格納する
                 }
             }
         }
+
         //上書き保存
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+
             //ファイル名存在するのか？
-            if(filename != "")
+            if (filename != "")
             {
                 //上書き処理
                 FileSave(filename);
             }
             else
             {
-                SaveNameAToolStripMenuItem_Click(sender, e);             
+                SaveNameAToolStripMenuItem_Click(sender, e);
             }
         }
-     
 
         //名前を付けて保存
         private void SaveNameAToolStripMenuItem_Click(object sender, EventArgs e)
@@ -76,17 +77,22 @@ namespace TextEditer31040
             }
         }
 
-        //新規作成
-        private void NewToolStripMenuItem_Click(object sender, EventArgs e)
+        //終了
+        private void EndXToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            filename = "";
-            rtTextArea.Text = "";
+            //アプリケーション終了
+            Application.Exit();
         }
-
+     
+        #endregion
+      
+        #region 編集
         //元に戻す
         private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
+        #endregion
     }
 }
+

@@ -62,6 +62,7 @@
             // rtTextArea
             // 
             this.rtTextArea.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtTextArea.EnableAutoDragDrop = true;
             this.rtTextArea.Location = new System.Drawing.Point(0, 24);
             this.rtTextArea.Name = "rtTextArea";
             this.rtTextArea.Size = new System.Drawing.Size(800, 426);
