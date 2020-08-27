@@ -26,13 +26,28 @@ namespace TextEditer31040
         //新規作成
         private void NewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            filename = "";
-            rtTextArea.Text = "";
+            //ファイル名存在するのか？
+            if (rtTextArea.Modified)
+            {
+                MsgBox(sender, e);
+            }
+            else
+            {
+                filename = "";
+                rtTextArea.Text = "";
+            }
+            
+            
         }
 
         //開く
         private void OpenOToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if(rtTextArea.Modified)
+            {
+                MsgBox(sender, e);
+            }
+
             //ダイアログを表示
             if (ofdFileOpen.ShowDialog() == DialogResult.OK)
             {
@@ -47,10 +62,11 @@ namespace TextEditer31040
         //上書き保存
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            
             //ファイル名存在するのか？
-            if (filename != "")
+            if (filename != "" && rtTextArea.TextLength > 0)
             {
+                
                 //上書き処理
                 FileSave(filename);
             }
@@ -79,11 +95,42 @@ namespace TextEditer31040
             }
         }
 
+
         //終了
         private void EndXToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //ファイル名存在するのか？
+            if (rtTextArea.Modified)
+            {
+                MsgBox(sender, e);
+            }
             //アプリケーション終了
             Application.Exit();
+            
+        }
+
+        //メッセージボックスを表示する
+        private  void MsgBox(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("未保存なものがあります。保存しますか？",
+                "質問",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Exclamation,
+                MessageBoxDefaultButton.Button2);
+
+            //何が選択されたか調べる
+            if (result == DialogResult.Yes)
+            {
+               //「はい」が選択されたとき    
+                    SaveToolStripMenuItem_Click(sender, e);
+            }
+            else if (result == DialogResult.No)
+            {
+                //「いいえ」が選択されたとき
+                rtTextArea.Text = "";
+                filename = "";
+            }else if (result == DialogResult.Cancel) { 
+            }
         }
 
         #endregion
@@ -131,33 +178,19 @@ namespace TextEditer31040
             rtTextArea.SelectedText = "";
         }
 
-        //マスクの設定
+        //編集メニュー項目のマスク処理
         private void EbitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (rtTextArea.TextLength == 0)
-            {
-                UndoToolStripMenuItem.Enabled = false; //元に戻す
-                RedoToolStripMenuItem.Enabled = false;　//やり直す
-                CutToolStripMenuItem.Enabled = false; //切り取り
-                CopyToolStripMenuItem.Enabled = false; //コピー
-                DeleteToolStripMenuItem.Enabled = false;//削除
-
-            }
-            else
-            {
-                UndoToolStripMenuItem.Enabled = true; //元に戻す
-                RedoToolStripMenuItem.Enabled = true;　//やり直す
-                CutToolStripMenuItem.Enabled = true; //切り取り
-                CopyToolStripMenuItem.Enabled = true; //コピー
-                DeleteToolStripMenuItem.Enabled = true;//削除
-            }
+        {    
+                UndoToolStripMenuItem.Enabled = rtTextArea.CanUndo;
+                RedoToolStripMenuItem.Enabled = rtTextArea.CanUndo;
+                CutToolStripMenuItem.Enabled = (rtTextArea.SelectionLength > 0);
+                CopyToolStripMenuItem.Enabled = (rtTextArea.SelectionLength > 0);
+            PasteToolStripMenuItem.Enabled = Clipboard.GetDataObject().GetDataPresent(DataFormats.Rtf);
         }
 
-
-        #endregion
         //色
         private void ColorToolStripMenuItem_Click(object sender, EventArgs e)
-        { 
+        {
             //ColorDialogクラスのインスタンスを作成
             ColorDialog cd = new ColorDialog();
 
@@ -172,6 +205,7 @@ namespace TextEditer31040
             }
         }
 
+        //フォント
         private void FontToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //FontDialogクラスのインスタンスを作成
@@ -181,15 +215,19 @@ namespace TextEditer31040
             fd.Font = rtTextArea.Font;
             //初期の色を設定
             fd.Color = rtTextArea.ForeColor;
-
+                    
             //ダイアログを表示する
             if (fd.ShowDialog() != DialogResult.Cancel)
             {
-                //TextBox1のフォントと色を変える
+                //rtTextAreaのフォントと色を変える
                 rtTextArea.Font = fd.Font;
                 rtTextArea.ForeColor = fd.Color;
             }
         }
+
+
+        #endregion
+
     }
 }
 
