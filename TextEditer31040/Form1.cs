@@ -43,20 +43,21 @@ namespace TextEditer31040
         //開く
         private void OpenOToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(rtTextArea.Modified)
+            if (rtTextArea.Modified)
             {
                 MsgBox(sender, e);
             }
-
-            //ダイアログを表示
-            if (ofdFileOpen.ShowDialog() == DialogResult.OK)
-            {
-                using (StreamReader sr = new StreamReader(ofdFileOpen.FileName, Encoding.GetEncoding("utf-8"), false))
+            
+                //ダイアログを表示
+                if (ofdFileOpen.ShowDialog() == DialogResult.OK)
                 {
-                    rtTextArea.Text = sr.ReadToEnd();
-                    filename = ofdFileOpen.FileName; //現在開いているファイル名を格納する
+                    using (StreamReader sr = new StreamReader(ofdFileOpen.FileName, Encoding.GetEncoding("utf-8"), false))
+                    {
+                        rtTextArea.Text = sr.ReadToEnd();
+                        filename = ofdFileOpen.FileName; //現在開いているファイル名を格納する
+                    }
                 }
-            }
+            
         }
 
         //上書き保存
@@ -110,7 +111,7 @@ namespace TextEditer31040
         }
 
         //メッセージボックスを表示する
-        private  void MsgBox(object sender, EventArgs e)
+        private  void  MsgBox(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("未保存なものがあります。保存しますか？",
                 "質問",
@@ -123,14 +124,18 @@ namespace TextEditer31040
             {
                //「はい」が選択されたとき    
                     SaveToolStripMenuItem_Click(sender, e);
+                
             }
             else if (result == DialogResult.No)
             {
                 //「いいえ」が選択されたとき
                 rtTextArea.Text = "";
                 filename = "";
-            }else if (result == DialogResult.Cancel) { 
+            }else if (result == DialogResult.Cancel)
+            {
+                
             }
+            
         }
 
         #endregion
@@ -228,6 +233,14 @@ namespace TextEditer31040
 
         #endregion
 
+        //フォームを閉じるときの処理
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (rtTextArea.Modified)
+            {
+                MsgBox(sender, e);
+            }
+        }
     }
 }
 
